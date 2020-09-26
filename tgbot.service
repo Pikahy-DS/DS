@@ -1,0 +1,14 @@
+[Unit]
+Description=Telegram Bot
+After=network.target
+
+[Service]
+User=dima
+Group=dima
+
+WorkingDirectory=/home/dima/DS/
+Environment="PYTHONPATH=/home/dima/DS/"
+ExecStart=/home/dima/DS/.venv/bin/python /home/dima/DS/schedule.py
+
+[Install]
+WantedBy=multi-user.target
