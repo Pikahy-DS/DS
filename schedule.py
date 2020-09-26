@@ -1,198 +1,195 @@
 # -*- coding: utf8 --
 while True:
-  try:
-    import telebot
-    import config
-    import random
-    from telebot import types, TeleBot
-    import datetime
-    import sqlite3
+    try:
+        import telebot
+        import config
+        import random
+        from telebot import types, TeleBot
+        import datetime
+        import sqlite3
 
-    #import COVID19Py
-    import pyowm
-    from telebot.types import InlineKeyboardMarkup
-    from pycbrf.toolbox import ExchangeRates
-    import One
-    import gc
-    import time
-    import Three
-    bot: TeleBot = telebot.TeleBot(config.TOKEN2)
-    owm = pyowm.OWM(config.TOKEN3, language = "ru")
-    #covid19 = COVID19Py.COVID19()
-    smiles = [
+        #import COVID19Py
+        import pyowm
+        from telebot.types import InlineKeyboardMarkup
+        from pycbrf.toolbox import ExchangeRates
+
+        bot: TeleBot = telebot.TeleBot(config.TOKEN2)
+        owm = pyowm.OWM(config.TOKEN3, language = "ru")
+        #covid19 = COVID19Py.COVID19()
+        smiles = [
         '❤','😘','😂','☺','😳','😚','😅','🙊','😐','😋','😆','😃','🤣','😍','🥰','😘','😝','🧐','🤬','😡','🤯'
-    ]
-    hello = [
+        ]
+        hello = [
         'Good morning', 'Good evening, i"m the dispatcher ', 'Good night', 'You are welcome', 'Thanks', 'Доброе утро', 'Hello', 'Hi', 'Привет','Добрый вечер, я диспетчер'
-    ]
-    @bot.message_handler(commands = ['start'])
-    def welcome(message):
+        ]
+        @bot.message_handler(commands = ['start'])
+        def welcome(message):
 
-        #keybroad
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard = True)
+            #keybroad
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard = True)
 
-        item1 = types.KeyboardButton('📅 Время')
-        item2 = types.KeyboardButton('🏠 Домой')
-        item3= types.KeyboardButton('⛅️Погода')
-        item4 = types.KeyboardButton('🏫 На учебу')
-        item5 = types.KeyboardButton('🔮 Гороскоп')
+            item1 = types.KeyboardButton('📅 Время')
+            item2 = types.KeyboardButton('🏠 Домой')
+            item3= types.KeyboardButton('⛅️Погода')
+            item4 = types.KeyboardButton('🏫 На учебу')
+            item5 = types.KeyboardButton('🔮 Гороскоп')
 
-        markup.add(item5,item3)
-        markup.add(item4,item2)
+            markup.add(item5,item3)
+            markup.add(item4,item2)
 
-        bot.send_message(message.chat.id,
-                         f"{random.choice(hello)}" + ", {0.first_name}!\nЯ - <b>Помошник</b>, бот созданный, чтобы упростить жизнь ".format(
-                             message.from_user, bot.get_me()) + f"{random.choice(smiles)}",
-                         parse_mode='html', reply_markup = markup)
-        print(message.from_user)
-    @bot.message_handler(commands = ['help'])
-    def helps(message):
-        ic = datetime.datetime.now(tz=None)
-        date_time= ic.strftime("%d-%m-%Y")
-        bot.send_message(message.chat.id, 'Ля, ты че <b>покемон</b>, запутался?\nНу, не бойся, ща я тебе помогу осмыслить, что к чему', parse_mode = 'html')
-        bot.send_message(message.chat.id, f'Вот мой <b>полный</b> список команд на {date_time} :\n/help - Ну то что ты и вызвал, <b>красавчик</b> {smiles[3]}\n/start - Опа, вот это поворот, не правда ли? {random.choice(smiles)}\nИ все, братишка, приплыли, больше команд нет {random.choice(smiles)}', parse_mode = 'html')
+            bot.send_message(message.chat.id,
+                             f"{random.choice(hello)}" + ", {0.first_name}!\nЯ - <b>Помошник</b>, бот созданный, чтобы упростить жизнь ".format(
+                                 message.from_user, bot.get_me()) + f"{random.choice(smiles)}",
+                             parse_mode='html', reply_markup = markup)
+            print(message.from_user)
+        @bot.message_handler(commands = ['help'])
+        def helps(message):
+            ic = datetime.datetime.now(tz=None)
+            date_time= ic.strftime("%d-%m-%Y")
+            bot.send_message(message.chat.id, 'Ля, ты че <b>покемон</b>, запутался?\nНу, не бойся, ща я тебе помогу осмыслить, что к чему', parse_mode = 'html')
+            bot.send_message(message.chat.id, f'Вот мой <b>полный</b> список команд на {date_time} :\n/help - Ну то что ты и вызвал, <b>красавчик</b> {smiles[3]}\n/start - Опа, вот это поворот, не правда ли? {random.choice(smiles)}\nИ все, братишка, приплыли, больше команд нет {random.choice(smiles)}', parse_mode = 'html')
 
-    @bot.callback_query_handler(func = lambda call: True) #Отвечает за виртуальные кнопки
-    def callback_woker(call):
-        try:
-            if call.data == 'Skorpion': #Гороскоп про скорпиона
-                numbers = [1, 2, 3, 4, 5]
-                ic = datetime.datetime.now(tz=None)
-                date_time = ic.strftime("%d")
-                colors = ["Красный", "Оранжевый", "Желтый", "Бежевый", "Серый", "Зеленый", "Синий", "Фиолетовый", "Белый",
-                          "Коричневый", "Черный", "Розовый","Orange",'Black',"White"]
-                Object = ["Карточка", "Ручка", "Карандаш", "Пенал", "Носочки", "Футболка", "Рубашка", "Цепочка", "Кольцо",
-                          "Ключи", "Зарядка", "Наушнии", "Тетрадь", "Кружка", "Браслет", "Очки", "Антистресс", "Свеча",
-                          "Кофе", "Чай","Зеркало","Фрукты","Овощи","Кофта","Телефон","Ноутбук","Маска","Часы","Ожерелье","Кулон","Гель для рук"]
-                quotes = ["Never look back", "A life is a moment", "All we need is love", "Enjoy every moment",
-                          "Follow your heart", "Live without regrets", "Live for yourself", "Strive for greatness",
-                          "Work hard. Dream big", "Be a voice not an echo", "You are your only limit", "Let it be",
-                          "Money often costs too much", "Cherish the moments", "Imagination rules the world",
-                          "Do something with passion or not it all", "Illusion is the first of all pleasures",
-                          "better to have ideals and dreams than nothing", "Only my dream keeps me alive",
-                          "loyal to the one who is loyal to you", "Everything happens for a reason",
-                          "If you never try you will never know", "It’s never too late to be what you might have been",
-                          "Some people are poor, all they have is money","I am туть ^^","Be careful what you eat", "Don’t be afraid to experiment/try new things",
-                          "Be careful not to upset or lose someone you love",
-                          "Don’t lend money to friends or family",
-                          "The problem can be overcome through open, honest dialogue",
-                          "I love you, Kate!"]
+        @bot.callback_query_handler(func = lambda call: True) #Отвечает за виртуальные кнопки
+        def callback_woker(call):
+            try:
+                if call.data == 'Skorpion': #Гороскоп про скорпиона
+                    numbers = [1, 2, 3, 4, 5]
+                    ic = datetime.datetime.now(tz=None)
+                    date_time = ic.strftime("%d")
+                    colors = ["Красный", "Оранжевый", "Желтый", "Бежевый", "Серый", "Зеленый", "Синий", "Фиолетовый", "Белый",
+                              "Коричневый", "Черный", "Розовый","Orange",'Black',"White"]
+                    Object = ["Карточка", "Ручка", "Карандаш", "Пенал", "Носочки", "Футболка", "Рубашка", "Цепочка", "Кольцо",
+                              "Ключи", "Зарядка", "Наушнии", "Тетрадь", "Кружка", "Браслет", "Очки", "Антистресс", "Свеча",
+                              "Кофе", "Чай","Зеркало","Фрукты","Овощи","Кофта","Телефон","Ноутбук","Маска","Часы","Ожерелье","Кулон","Гель для рук"]
+                    quotes = ["Never look back", "A life is a moment", "All we need is love", "Enjoy every moment",
+                              "Follow your heart", "Live without regrets", "Live for yourself", "Strive for greatness",
+                              "Work hard. Dream big", "Be a voice not an echo", "You are your only limit", "Let it be",
+                              "Money often costs too much", "Cherish the moments", "Imagination rules the world",
+                              "Do something with passion or not it all", "Illusion is the first of all pleasures",
+                              "better to have ideals and dreams than nothing", "Only my dream keeps me alive",
+                              "loyal to the one who is loyal to you", "Everything happens for a reason",
+                              "If you never try you will never know", "It’s never too late to be what you might have been",
+                              "Some people are poor, all they have is money","I am туть ^^","Be careful what you eat", "Don’t be afraid to experiment/try new things",
+                              "Be careful not to upset or lose someone you love",
+                              "Don’t lend money to friends or family",
+                              "The problem can be overcome through open, honest dialogue",
+                              "I love you, Kate!"]
 
-                advice_1 = ["You may be exposed to a new vision of your future today, and one that you had not previously considered. Your partner may have quite a surprise in store for you. Not only do they want the relationship to continue to grow, they also want you both to do something very new and quite exciting together. Whatever it is, you will be thrilled.",
-                            "If you've put in your time and done your homework, this day can prove very rewarding, Scorpio. Watch out for incredible opportunities hiding nearby. You have a great deal of physical energy today, although you may find it erratic and a bit out of control. Break free of anything that seems to be binding you. Shed the chains and live the way you want to live.",
-                            "You are willing to commit to a certain extent, but yet you are hesitant to commit all the way. Don't be. Now is the time to do something with great confidence. Either pursue this idea with everything you've got, or don't pursue it at all.",
-                            "As you take charge of your health, you may feel at times that there is a bit too much to keep track of! Diet, routine, exercise, illness, sleep - and everything else that is involved with this thing called 'self-love.' This is why you have friends. Your friends can help you assess your situation and figure out the best course of action. Sometimes laughing away the tension is all you really need!",
-                            "You might have the chance to speak with new people in interesting fields, perhaps from foreign lands, Scorpio. Your conversational abilities are at an all-time high, so you'll not only enjoy talking with everyone, but they'll enjoy talking with you, too. Intriguing ideas and useful information could have your mind buzzing all night. Try to take a walk in the evening to clear your head.",
-                            "Conversation today may not be at its most witty and sparkling, but you will nevertheless make quite a lot of progress romantically. The person you have set your sights on may not be the most talkative you have met, but they do have many other qualities that you intend to take seriously. You will probably make an impression if you behave calmly and considerately.",
-                            "For every pharmaceutical treatment, there is a holistic way to take care of yourself! Pay attention to where you get your knowledge regarding wellness. Do you rely on what your parents taught you? (How is their health?) Do you believe what's written on all the packaging you buy? Do you have a friend or two who seem 'tuned in' to holistic health care practices? Open yourself to receiving knowledge from new sources and notice the healthy difference it can make in your life.",
-                            "There is so much sensitivity in you. You may feel that peace is all you need to be happy, and be heartbroken to see what is going on in the world. Try giving yourself peace as much and as often as you can: peace in the bathtub, peace at the dinner table, and peace in bed. Learn to require in your own life what you want to see in the world. Drawing that power up in yourself will give you focus and ground you. Exercise is the mainstay of this dream.",
-                            "Thanks to the day's planetary configuration, you will intuitively sense the state of world affairs. This aspect sends messages of brotherly love, and in many cases, meets with resistance. Give yourself the benefit of a healthy lifestyle during this critical time in the human story. A healthy lifestyle includes plenty of rest because an overactive mind can take you away from the basics. Rest, diet, and exercise should be your mantra during trying times.",
-                            "This is a day of fresh beginnings for you, Scorpio. Accomplishments in the past foster a new sense of self-confidence, along with optimism and enthusiasm for the future. Travel lies ahead in the distant future, and possibly advancing your education in some way. Romance also looks promising. Go for a facial or massage today, if possible, or buy some new clothes. Start the new cycle by making your appearance match what you feel inside.",
-                            "Something you might have wanted to keep between you and a few trusted friends could inadvertently be revealed, perhaps to the wrong people. Frustration and a sense of betrayal could plague you, but don't turn against those who knew. Even though this can be disconcerting, you can learn from it. Benjamin Franklin said, 'Two people can keep a secret only when one of them is dead.'",
-                            "This is a time when you're likely to feel especially idealistic and hopeful. Spiritual experiences may have you on cloud nine, Scorpio. Your intuition is also strong. You might consider taking a future trip to a distant state or foreign country, perhaps one associated with a great spiritual tradition. Wait a day or two and talk it over with friends before making any specific arrangements.",
-                            "Crazy as it seems, why not plan that trip you've been eager to go on, Scorpio? Adventure calls, and although there are a few obstacles to stop you from answering, you can’t wait to get out of your rut. There is a great big world out there, and you can’t wait to make the time to go and see some of it!",
-                            "Today you're likely to experience a powerful burst of energy that may temporarily turn you into a workaholic. Chores may have piled up around the house that desperately need to be done. You may want to go through them like wildfire. You don't have to do them all at once. Take care of the most pressing tasks and then relax. The rest can wait. Ask family members to help.",
-                            "Today you could be feeling warm and friendly toward everyone. You might be involved in virtual social events or receive invitations to future parties. You'll probably have a great time and make some new friends. Take care to take lots of vitamin C. There could be colds or other bugs flying around and you could be more susceptible to such infections at this time.",
-                            "There could be some restrictions on your emotions today, Scorpio. You'll find that a practical, grounded force is working against your intuitive understanding of whatever issue concerns you. Do your best to anchor yourself in the truth before you scatter seeds of erratic emotions all over the place. It's important for you to maintain stability at all times.",
-                            "Today, Scorpio, you might turn to practices like meditation or psychic development. Some vivid dreams over the past few days may have brought up personal issues that you need to clear up in order to progress. You may pick up on the thoughts and feelings of others more strongly than usual. If you've been thinking about learning to read tarot cards or runes, this is the day to start.",
-                            "Emotions could be intense at work today as important projects approach their deadlines, Scorpio. You may put in more time than usual. Tempers might flare and co-workers clash, so stay calm and keep going. On the positive side, the financial and recognition payoffs for whatever you accomplish today should prove well worth the effort.",
-                            "You may be feeling a bit on edge today, Scorpio. Your self-confidence is shaky and you may feel in need of new challenges. The tedious tasks you have in front of you don't inspire your imagination or creativity. Do what you can to get through this difficult day. Be extra kind to yourself by indulging in a good lunch or listening to classical music.",
-                            "There's tension in the air today, Scorpio, and you might be restless and anxious to start something. There is plenty of energy around to feed you, but the trick is to make sure that you're doing things for the right reasons. Don't do things out of guilt, fear, or regret. Keep on the best path for the best reasons for the best results.",
-                            "Scorpio, you're usually more outwardly directed, but today you might break that pattern. You could be in a contemplative mood and wondering about everything from metaphysics to philosophy to money to your future. You're basically feeling positive about life, but you might be at a crossroads now. It may take some serious thought before you decide which direction to go. Give yourself some time.",
-                            "Financial worries might come up today, Scorpio. You may check your bank balance and find that you have little money. This might come as a shock, because you thought there was plenty there. Before you panic, ask whoever's in charge at the bank to double-check the records. It's probably a computer error. It shouldn't take long to correct, and you'll be able to breathe a sigh of relief.",
-                            "There's an incredibly expansive feeling in the air that you should latch onto, Scorpio. Things are moving rapidly. You'll find long-term trends come together quite well. The thing to be aware of today is making sure you're operating based on facts you know to be true. Check your sources. Be cautious, but if you see an opportunity that looks good, run with it.",
-                            "Today's a good day to check into advancing your career or education, Scorpio. The energy favors expansion and growth. When was the last time you learned a new skill? It doesn't have to be work related, either. If arranging flowers, skydiving, or programming websites is something that appeals to you, go for it. Never stop looking for ways to expand your knowledge.",
-                            "If you've been feeling tired or sick lately, this will probably turn around for you today, Scorpio. Bouts of moodiness can be a real drain. Your emotional state has a pronounced effect on the way your body feels. Be sure to take care of your feelings as well as your body. If there are things that need to be worked out, do that now. The two really do go together.",
-                            "Working within boundaries and restrictions could get to you today, Scorpio. Yours is an independent spirit, and your best achievements are often born of doing things your own way. Like it or not, we all have to follow rules. Finish what needs to be done. Afterward, you may find more freedom to act independently without consequences. Exercise patience and diligence as needed.",
-                            "Continued success and good luck should have you feeling charged up to move ahead with plans and ideas. Your energy and enthusiasm are high, Scorpio. You're likely thinking about expanding your horizons, perhaps through travel or education. You should definitely give these serious thought. Plan carefully and take care not to move before the time is right.",
-                            "Your heart has been active, Scorpio, and you're probably feeling the need to take charge of a certain relationship. Instead of being too hasty in your pursuit of this romance, you should probably do more planning. Look at the situation from a long-term perspective and see if the partnership is heading the way you want it to, based on how things are moving now. It could be that you're jumping ahead of the game.",
-                            "Be yourself today - 100 percent you, Scorpio. The world needs more individuality. Revel in your unique qualities and be generous about sharing them with the world. Feel free to adopt a new and unconventional way of doing something - anything. Beware, however, that there may be a strong, grounding force that's trying to tie you down to tradition. Don't feel pressured to give in to the social norm.",
-                            "There's a great deal of fuel to keep your fire raging today, Scorpio. Powerful situations are apt to come your way in which you're asked to take decisive action. Don't shy away from added responsibility. Your ego is very strong, which helps you take charge of any situation. Just make sure that you don't step on anyone's toes in the process.",
-                            "There's a great deal of fuel to keep your fire raging today, Scorpio. Powerful situations are apt to come your way in which you're asked to take decisive action. Don't shy away from added responsibility. Your ego is very strong, which helps you take charge of any situation. Just make sure that you don't step on anyone's toes in the process.",
-                            "Today is your day to dream and dream big, Scorpio. Think about what it is that you want most out of life. Aim your arrow to the stars and pull back your bow as far as possible. There's no limit to how far you can go. Your only limitation is your imagination. Don't worry if your plan doesn't seem to make any rational sense. Worry more about what you want and less about how you're going to get it."]
+                    advice_1 = ["You may be exposed to a new vision of your future today, and one that you had not previously considered. Your partner may have quite a surprise in store for you. Not only do they want the relationship to continue to grow, they also want you both to do something very new and quite exciting together. Whatever it is, you will be thrilled.",
+                                "If you've put in your time and done your homework, this day can prove very rewarding, Scorpio. Watch out for incredible opportunities hiding nearby. You have a great deal of physical energy today, although you may find it erratic and a bit out of control. Break free of anything that seems to be binding you. Shed the chains and live the way you want to live.",
+                                "You are willing to commit to a certain extent, but yet you are hesitant to commit all the way. Don't be. Now is the time to do something with great confidence. Either pursue this idea with everything you've got, or don't pursue it at all.",
+                                "As you take charge of your health, you may feel at times that there is a bit too much to keep track of! Diet, routine, exercise, illness, sleep - and everything else that is involved with this thing called 'self-love.' This is why you have friends. Your friends can help you assess your situation and figure out the best course of action. Sometimes laughing away the tension is all you really need!",
+                                "You might have the chance to speak with new people in interesting fields, perhaps from foreign lands, Scorpio. Your conversational abilities are at an all-time high, so you'll not only enjoy talking with everyone, but they'll enjoy talking with you, too. Intriguing ideas and useful information could have your mind buzzing all night. Try to take a walk in the evening to clear your head.",
+                                "Conversation today may not be at its most witty and sparkling, but you will nevertheless make quite a lot of progress romantically. The person you have set your sights on may not be the most talkative you have met, but they do have many other qualities that you intend to take seriously. You will probably make an impression if you behave calmly and considerately.",
+                                "For every pharmaceutical treatment, there is a holistic way to take care of yourself! Pay attention to where you get your knowledge regarding wellness. Do you rely on what your parents taught you? (How is their health?) Do you believe what's written on all the packaging you buy? Do you have a friend or two who seem 'tuned in' to holistic health care practices? Open yourself to receiving knowledge from new sources and notice the healthy difference it can make in your life.",
+                                "There is so much sensitivity in you. You may feel that peace is all you need to be happy, and be heartbroken to see what is going on in the world. Try giving yourself peace as much and as often as you can: peace in the bathtub, peace at the dinner table, and peace in bed. Learn to require in your own life what you want to see in the world. Drawing that power up in yourself will give you focus and ground you. Exercise is the mainstay of this dream.",
+                                "Thanks to the day's planetary configuration, you will intuitively sense the state of world affairs. This aspect sends messages of brotherly love, and in many cases, meets with resistance. Give yourself the benefit of a healthy lifestyle during this critical time in the human story. A healthy lifestyle includes plenty of rest because an overactive mind can take you away from the basics. Rest, diet, and exercise should be your mantra during trying times.",
+                                "This is a day of fresh beginnings for you, Scorpio. Accomplishments in the past foster a new sense of self-confidence, along with optimism and enthusiasm for the future. Travel lies ahead in the distant future, and possibly advancing your education in some way. Romance also looks promising. Go for a facial or massage today, if possible, or buy some new clothes. Start the new cycle by making your appearance match what you feel inside.",
+                                "Something you might have wanted to keep between you and a few trusted friends could inadvertently be revealed, perhaps to the wrong people. Frustration and a sense of betrayal could plague you, but don't turn against those who knew. Even though this can be disconcerting, you can learn from it. Benjamin Franklin said, 'Two people can keep a secret only when one of them is dead.'",
+                                "This is a time when you're likely to feel especially idealistic and hopeful. Spiritual experiences may have you on cloud nine, Scorpio. Your intuition is also strong. You might consider taking a future trip to a distant state or foreign country, perhaps one associated with a great spiritual tradition. Wait a day or two and talk it over with friends before making any specific arrangements.",
+                                "Crazy as it seems, why not plan that trip you've been eager to go on, Scorpio? Adventure calls, and although there are a few obstacles to stop you from answering, you can’t wait to get out of your rut. There is a great big world out there, and you can’t wait to make the time to go and see some of it!",
+                                "Today you're likely to experience a powerful burst of energy that may temporarily turn you into a workaholic. Chores may have piled up around the house that desperately need to be done. You may want to go through them like wildfire. You don't have to do them all at once. Take care of the most pressing tasks and then relax. The rest can wait. Ask family members to help.",
+                                "Today you could be feeling warm and friendly toward everyone. You might be involved in virtual social events or receive invitations to future parties. You'll probably have a great time and make some new friends. Take care to take lots of vitamin C. There could be colds or other bugs flying around and you could be more susceptible to such infections at this time.",
+                                "There could be some restrictions on your emotions today, Scorpio. You'll find that a practical, grounded force is working against your intuitive understanding of whatever issue concerns you. Do your best to anchor yourself in the truth before you scatter seeds of erratic emotions all over the place. It's important for you to maintain stability at all times.",
+                                "Today, Scorpio, you might turn to practices like meditation or psychic development. Some vivid dreams over the past few days may have brought up personal issues that you need to clear up in order to progress. You may pick up on the thoughts and feelings of others more strongly than usual. If you've been thinking about learning to read tarot cards or runes, this is the day to start.",
+                                "Emotions could be intense at work today as important projects approach their deadlines, Scorpio. You may put in more time than usual. Tempers might flare and co-workers clash, so stay calm and keep going. On the positive side, the financial and recognition payoffs for whatever you accomplish today should prove well worth the effort.",
+                                "You may be feeling a bit on edge today, Scorpio. Your self-confidence is shaky and you may feel in need of new challenges. The tedious tasks you have in front of you don't inspire your imagination or creativity. Do what you can to get through this difficult day. Be extra kind to yourself by indulging in a good lunch or listening to classical music.",
+                                "There's tension in the air today, Scorpio, and you might be restless and anxious to start something. There is plenty of energy around to feed you, but the trick is to make sure that you're doing things for the right reasons. Don't do things out of guilt, fear, or regret. Keep on the best path for the best reasons for the best results.",
+                                "Scorpio, you're usually more outwardly directed, but today you might break that pattern. You could be in a contemplative mood and wondering about everything from metaphysics to philosophy to money to your future. You're basically feeling positive about life, but you might be at a crossroads now. It may take some serious thought before you decide which direction to go. Give yourself some time.",
+                                "Financial worries might come up today, Scorpio. You may check your bank balance and find that you have little money. This might come as a shock, because you thought there was plenty there. Before you panic, ask whoever's in charge at the bank to double-check the records. It's probably a computer error. It shouldn't take long to correct, and you'll be able to breathe a sigh of relief.",
+                                "There's an incredibly expansive feeling in the air that you should latch onto, Scorpio. Things are moving rapidly. You'll find long-term trends come together quite well. The thing to be aware of today is making sure you're operating based on facts you know to be true. Check your sources. Be cautious, but if you see an opportunity that looks good, run with it.",
+                                "Today's a good day to check into advancing your career or education, Scorpio. The energy favors expansion and growth. When was the last time you learned a new skill? It doesn't have to be work related, either. If arranging flowers, skydiving, or programming websites is something that appeals to you, go for it. Never stop looking for ways to expand your knowledge.",
+                                "If you've been feeling tired or sick lately, this will probably turn around for you today, Scorpio. Bouts of moodiness can be a real drain. Your emotional state has a pronounced effect on the way your body feels. Be sure to take care of your feelings as well as your body. If there are things that need to be worked out, do that now. The two really do go together.",
+                                "Working within boundaries and restrictions could get to you today, Scorpio. Yours is an independent spirit, and your best achievements are often born of doing things your own way. Like it or not, we all have to follow rules. Finish what needs to be done. Afterward, you may find more freedom to act independently without consequences. Exercise patience and diligence as needed.",
+                                "Continued success and good luck should have you feeling charged up to move ahead with plans and ideas. Your energy and enthusiasm are high, Scorpio. You're likely thinking about expanding your horizons, perhaps through travel or education. You should definitely give these serious thought. Plan carefully and take care not to move before the time is right.",
+                                "Your heart has been active, Scorpio, and you're probably feeling the need to take charge of a certain relationship. Instead of being too hasty in your pursuit of this romance, you should probably do more planning. Look at the situation from a long-term perspective and see if the partnership is heading the way you want it to, based on how things are moving now. It could be that you're jumping ahead of the game.",
+                                "Be yourself today - 100 percent you, Scorpio. The world needs more individuality. Revel in your unique qualities and be generous about sharing them with the world. Feel free to adopt a new and unconventional way of doing something - anything. Beware, however, that there may be a strong, grounding force that's trying to tie you down to tradition. Don't feel pressured to give in to the social norm.",
+                                "There's a great deal of fuel to keep your fire raging today, Scorpio. Powerful situations are apt to come your way in which you're asked to take decisive action. Don't shy away from added responsibility. Your ego is very strong, which helps you take charge of any situation. Just make sure that you don't step on anyone's toes in the process.",
+                                "There's a great deal of fuel to keep your fire raging today, Scorpio. Powerful situations are apt to come your way in which you're asked to take decisive action. Don't shy away from added responsibility. Your ego is very strong, which helps you take charge of any situation. Just make sure that you don't step on anyone's toes in the process.",
+                                "Today is your day to dream and dream big, Scorpio. Think about what it is that you want most out of life. Aim your arrow to the stars and pull back your bow as far as possible. There's no limit to how far you can go. Your only limitation is your imagination. Don't worry if your plan doesn't seem to make any rational sense. Worry more about what you want and less about how you're going to get it."]
 
 
-                bot.send_message(call.message.chat.id,
-                                 f"♏Scorpio:\n{str(quotes[int(date_time)])}.\n✅ {str(colors[(int(date_time)// 2)])}\n✅ {str(Object[(int(date_time))])}"
-                                 f"\n\n" + advice_1[int(date_time)]+"\n💰: " + random.choice(numbers) * "⭐" + f"\n❣: " + random.choice(
-                                     numbers) * "⭐" + f"\n🏢: " + random.choice(numbers) * "⭐" + f"\n💊: " + random.choice(
-                                     numbers) * "⭐")
+                    bot.send_message(call.message.chat.id,
+                                     f"♏Scorpio:\n{str(quotes[int(date_time)])}.\n✅ {str(colors[(int(date_time)// 2)])}\n✅ {str(Object[(int(date_time))])}"
+                                     f"\n\n" + advice_1[int(date_time)]+"\n💰: " + random.choice(numbers) * "⭐" + f"\n❣: " + random.choice(
+                                         numbers) * "⭐" + f"\n🏢: " + random.choice(numbers) * "⭐" + f"\n💊: " + random.choice(
+                                         numbers) * "⭐")
 
-                bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text= call.message.text,
-                                  reply_markup='')
-            elif call.data == 'Oven':
-                numbers = [1, 2, 3, 4, 5]
-                ic = datetime.datetime.now(tz=None)
-                date_time = ic.strftime("%d")
-                colors = ["Красный", "Оранжевый", "Желтый", "Бежевый", "Серый", "Зеленый", "Синий", "Фиолетовый", "Белый",
-                          "Коричневый", "Черный", "Розовый", "Orange", 'Black', "White"]
-                Object = ["Карточка", "Ручка", "Карандаш", "Пенал", "Носочки", "Футболка", "Рубашка", "Цепочка", "Кольцо",
-                          "Ключи", "Зарядка", "Наушнии", "Тетрадь", "Кружка", "Браслет", "Очки", "Антистресс", "Свеча",
-                          "Кофе", "Чай", "Зеркало", "Фрукты", "Овощи", "Кофта", "Телефон", "Ноутбук", "Маска", "Часы",
-                          "Ожерелье", "Кулон", "Гель для рук"]
-                quotes = ["Never look back", "A life is a moment", "All we need is love", "Enjoy every moment",
-                          "Follow your heart", "Live without regrets", "Live for yourself", "Strive for greatness",
-                          "Work hard. Dream big", "Be a voice not an echo", "You are your only limit", "Let it be",
-                          "Money often costs too much", "Cherish the moments", "Imagination rules the world",
-                          "Do something with passion or not it all", "Illusion is the first of all pleasures",
-                          "better to have ideals and dreams than nothing", "Only my dream keeps me alive",
-                          "loyal to the one who is loyal to you", "Everything happens for a reason",
-                          "If you never try you will never know", "It’s never too late to be what you might have been",
-                          "Some people are poor, all they have is money", "I am туть ^^", "Be careful what you eat",
-                          "Don’t be afraid to experiment/try new things",
-                          "Be careful not to upset or lose someone you love",
-                          "Don’t lend money to friends or family",
-                          "The problem can be overcome through open, honest dialogue",
-                          "I love you, Kate!"]
-
-                advice_1 = [
-                    "You may be exposed to a new vision of your future today, and one that you had not previously considered. Your partner may have quite a surprise in store for you. Not only do they want the relationship to continue to grow, they also want you both to do something very new and quite exciting together. Whatever it is, you will be thrilled.",
-                    "If you've put in your time and done your homework, this day can prove very rewarding, Scorpio. Watch out for incredible opportunities hiding nearby. You have a great deal of physical energy today, although you may find it erratic and a bit out of control. Break free of anything that seems to be binding you. Shed the chains and live the way you want to live.",
-                    "You are willing to commit to a certain extent, but yet you are hesitant to commit all the way. Don't be. Now is the time to do something with great confidence. Either pursue this idea with everything you've got, or don't pursue it at all.",
-                    "As you take charge of your health, you may feel at times that there is a bit too much to keep track of! Diet, routine, exercise, illness, sleep - and everything else that is involved with this thing called 'self-love.' This is why you have friends. Your friends can help you assess your situation and figure out the best course of action. Sometimes laughing away the tension is all you really need!",
-                    "You might have the chance to speak with new people in interesting fields, perhaps from foreign lands, Scorpio. Your conversational abilities are at an all-time high, so you'll not only enjoy talking with everyone, but they'll enjoy talking with you, too. Intriguing ideas and useful information could have your mind buzzing all night. Try to take a walk in the evening to clear your head.",
-                    "Conversation today may not be at its most witty and sparkling, but you will nevertheless make quite a lot of progress romantically. The person you have set your sights on may not be the most talkative you have met, but they do have many other qualities that you intend to take seriously. You will probably make an impression if you behave calmly and considerately.",
-                    "For every pharmaceutical treatment, there is a holistic way to take care of yourself! Pay attention to where you get your knowledge regarding wellness. Do you rely on what your parents taught you? (How is their health?) Do you believe what's written on all the packaging you buy? Do you have a friend or two who seem 'tuned in' to holistic health care practices? Open yourself to receiving knowledge from new sources and notice the healthy difference it can make in your life.",
-                    "There is so much sensitivity in you. You may feel that peace is all you need to be happy, and be heartbroken to see what is going on in the world. Try giving yourself peace as much and as often as you can: peace in the bathtub, peace at the dinner table, and peace in bed. Learn to require in your own life what you want to see in the world. Drawing that power up in yourself will give you focus and ground you. Exercise is the mainstay of this dream.",
-                    "Thanks to the day's planetary configuration, you will intuitively sense the state of world affairs. This aspect sends messages of brotherly love, and in many cases, meets with resistance. Give yourself the benefit of a healthy lifestyle during this critical time in the human story. A healthy lifestyle includes plenty of rest because an overactive mind can take you away from the basics. Rest, diet, and exercise should be your mantra during trying times.",
-                    "This is a day of fresh beginnings for you, Scorpio. Accomplishments in the past foster a new sense of self-confidence, along with optimism and enthusiasm for the future. Travel lies ahead in the distant future, and possibly advancing your education in some way. Romance also looks promising. Go for a facial or massage today, if possible, or buy some new clothes. Start the new cycle by making your appearance match what you feel inside.",
-                    "Something you might have wanted to keep between you and a few trusted friends could inadvertently be revealed, perhaps to the wrong people. Frustration and a sense of betrayal could plague you, but don't turn against those who knew. Even though this can be disconcerting, you can learn from it. Benjamin Franklin said, 'Two people can keep a secret only when one of them is dead.'",
-                    "This is a time when you're likely to feel especially idealistic and hopeful. Spiritual experiences may have you on cloud nine, Scorpio. Your intuition is also strong. You might consider taking a future trip to a distant state or foreign country, perhaps one associated with a great spiritual tradition. Wait a day or two and talk it over with friends before making any specific arrangements.",
-                    "Crazy as it seems, why not plan that trip you've been eager to go on, Scorpio? Adventure calls, and although there are a few obstacles to stop you from answering, you can’t wait to get out of your rut. There is a great big world out there, and you can’t wait to make the time to go and see some of it!",
-                    "Today you're likely to experience a powerful burst of energy that may temporarily turn you into a workaholic. Chores may have piled up around the house that desperately need to be done. You may want to go through them like wildfire. You don't have to do them all at once. Take care of the most pressing tasks and then relax. The rest can wait. Ask family members to help.",
-                    "Today you could be feeling warm and friendly toward everyone. You might be involved in virtual social events or receive invitations to future parties. You'll probably have a great time and make some new friends. Take care to take lots of vitamin C. There could be colds or other bugs flying around and you could be more susceptible to such infections at this time.",
-                    "There could be some restrictions on your emotions today, Scorpio. You'll find that a practical, grounded force is working against your intuitive understanding of whatever issue concerns you. Do your best to anchor yourself in the truth before you scatter seeds of erratic emotions all over the place. It's important for you to maintain stability at all times.",
-                    "Today, Scorpio, you might turn to practices like meditation or psychic development. Some vivid dreams over the past few days may have brought up personal issues that you need to clear up in order to progress. You may pick up on the thoughts and feelings of others more strongly than usual. If you've been thinking about learning to read tarot cards or runes, this is the day to start.",
-                    "Emotions could be intense at work today as important projects approach their deadlines, Scorpio. You may put in more time than usual. Tempers might flare and co-workers clash, so stay calm and keep going. On the positive side, the financial and recognition payoffs for whatever you accomplish today should prove well worth the effort.",
-                    "You may be feeling a bit on edge today, Scorpio. Your self-confidence is shaky and you may feel in need of new challenges. The tedious tasks you have in front of you don't inspire your imagination or creativity. Do what you can to get through this difficult day. Be extra kind to yourself by indulging in a good lunch or listening to classical music.",
-                    "There's tension in the air today, Scorpio, and you might be restless and anxious to start something. There is plenty of energy around to feed you, but the trick is to make sure that you're doing things for the right reasons. Don't do things out of guilt, fear, or regret. Keep on the best path for the best reasons for the best results.",
-                    "Scorpio, you're usually more outwardly directed, but today you might break that pattern. You could be in a contemplative mood and wondering about everything from metaphysics to philosophy to money to your future. You're basically feeling positive about life, but you might be at a crossroads now. It may take some serious thought before you decide which direction to go. Give yourself some time.",
-                    "Financial worries might come up today, Scorpio. You may check your bank balance and find that you have little money. This might come as a shock, because you thought there was plenty there. Before you panic, ask whoever's in charge at the bank to double-check the records. It's probably a computer error. It shouldn't take long to correct, and you'll be able to breathe a sigh of relief.",
-                    "There's an incredibly expansive feeling in the air that you should latch onto, Scorpio. Things are moving rapidly. You'll find long-term trends come together quite well. The thing to be aware of today is making sure you're operating based on facts you know to be true. Check your sources. Be cautious, but if you see an opportunity that looks good, run with it.",
-                    "Today's a good day to check into advancing your career or education, Scorpio. The energy favors expansion and growth. When was the last time you learned a new skill? It doesn't have to be work related, either. If arranging flowers, skydiving, or programming websites is something that appeals to you, go for it. Never stop looking for ways to expand your knowledge.",
-                    "If you've been feeling tired or sick lately, this will probably turn around for you today, Scorpio. Bouts of moodiness can be a real drain. Your emotional state has a pronounced effect on the way your body feels. Be sure to take care of your feelings as well as your body. If there are things that need to be worked out, do that now. The two really do go together.",
-                    "Working within boundaries and restrictions could get to you today, Scorpio. Yours is an independent spirit, and your best achievements are often born of doing things your own way. Like it or not, we all have to follow rules. Finish what needs to be done. Afterward, you may find more freedom to act independently without consequences. Exercise patience and diligence as needed.",
-                    "Continued success and good luck should have you feeling charged up to move ahead with plans and ideas. Your energy and enthusiasm are high, Scorpio. You're likely thinking about expanding your horizons, perhaps through travel or education. You should definitely give these serious thought. Plan carefully and take care not to move before the time is right.",
-                    "Your heart has been active, Scorpio, and you're probably feeling the need to take charge of a certain relationship. Instead of being too hasty in your pursuit of this romance, you should probably do more planning. Look at the situation from a long-term perspective and see if the partnership is heading the way you want it to, based on how things are moving now. It could be that you're jumping ahead of the game.",
-                    "Be yourself today - 100 percent you, Scorpio. The world needs more individuality. Revel in your unique qualities and be generous about sharing them with the world. Feel free to adopt a new and unconventional way of doing something - anything. Beware, however, that there may be a strong, grounding force that's trying to tie you down to tradition. Don't feel pressured to give in to the social norm.",
-                    "There's a great deal of fuel to keep your fire raging today, Scorpio. Powerful situations are apt to come your way in which you're asked to take decisive action. Don't shy away from added responsibility. Your ego is very strong, which helps you take charge of any situation. Just make sure that you don't step on anyone's toes in the process.",
-                    "There's a great deal of fuel to keep your fire raging today, Scorpio. Powerful situations are apt to come your way in which you're asked to take decisive action. Don't shy away from added responsibility. Your ego is very strong, which helps you take charge of any situation. Just make sure that you don't step on anyone's toes in the process.",
-                    "Today is your day to dream and dream big, Scorpio. Think about what it is that you want most out of life. Aim your arrow to the stars and pull back your bow as far as possible. There's no limit to how far you can go. Your only limitation is your imagination. Don't worry if your plan doesn't seem to make any rational sense. Worry more about what you want and less about how you're going to get it."]
-
-                bot.send_message(call.message.chat.id,
-                                 f"♈️Aries:\n{str(random.choice(quotes))}.\n✅ {str(random.choice(colors))}\n✅ {str(random.choice(Object))}"
-                                 f"\n\n" + str(random.choice(advice_1)) + "\n💰: " + random.choice(
-                                     numbers) * "⭐" + f"\n❣: " + random.choice(
-                                     numbers) * "⭐" + f"\n🏢: " + random.choice(numbers) * "⭐" + f"\n💊: " + random.choice(
-                                     numbers) * "⭐")
-
-                bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-                                      text=call.message.text,
+                    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text= call.message.text,
                                       reply_markup='')
-        except Exception:
-            bot.edit_message_text(call.message.chat.id, 'Это что еще за покемон?\nОшибка на сервер, сейчас кабанчики подскочат и порешают!')
-    @bot.message_handler(content_types = ['text'])
-    def main(message): #Отвечает за кнопки на клавиатуре
+                elif call.data == 'Oven':
+                    numbers = [1, 2, 3, 4, 5]
+                    ic = datetime.datetime.now(tz=None)
+                    date_time = ic.strftime("%d")
+                    colors = ["Красный", "Оранжевый", "Желтый", "Бежевый", "Серый", "Зеленый", "Синий", "Фиолетовый", "Белый",
+                              "Коричневый", "Черный", "Розовый", "Orange", 'Black', "White"]
+                    Object = ["Карточка", "Ручка", "Карандаш", "Пенал", "Носочки", "Футболка", "Рубашка", "Цепочка", "Кольцо",
+                              "Ключи", "Зарядка", "Наушнии", "Тетрадь", "Кружка", "Браслет", "Очки", "Антистресс", "Свеча",
+                              "Кофе", "Чай", "Зеркало", "Фрукты", "Овощи", "Кофта", "Телефон", "Ноутбук", "Маска", "Часы",
+                              "Ожерелье", "Кулон", "Гель для рук"]
+                    quotes = ["Never look back", "A life is a moment", "All we need is love", "Enjoy every moment",
+                              "Follow your heart", "Live without regrets", "Live for yourself", "Strive for greatness",
+                              "Work hard. Dream big", "Be a voice not an echo", "You are your only limit", "Let it be",
+                              "Money often costs too much", "Cherish the moments", "Imagination rules the world",
+                              "Do something with passion or not it all", "Illusion is the first of all pleasures",
+                              "better to have ideals and dreams than nothing", "Only my dream keeps me alive",
+                              "loyal to the one who is loyal to you", "Everything happens for a reason",
+                              "If you never try you will never know", "It’s never too late to be what you might have been",
+                              "Some people are poor, all they have is money", "I am туть ^^", "Be careful what you eat",
+                              "Don’t be afraid to experiment/try new things",
+                              "Be careful not to upset or lose someone you love",
+                              "Don’t lend money to friends or family",
+                              "The problem can be overcome through open, honest dialogue",
+                              "I love you, Kate!"]
+
+                    advice_1 = [
+                        "You may be exposed to a new vision of your future today, and one that you had not previously considered. Your partner may have quite a surprise in store for you. Not only do they want the relationship to continue to grow, they also want you both to do something very new and quite exciting together. Whatever it is, you will be thrilled.",
+                        "If you've put in your time and done your homework, this day can prove very rewarding, Scorpio. Watch out for incredible opportunities hiding nearby. You have a great deal of physical energy today, although you may find it erratic and a bit out of control. Break free of anything that seems to be binding you. Shed the chains and live the way you want to live.",
+                        "You are willing to commit to a certain extent, but yet you are hesitant to commit all the way. Don't be. Now is the time to do something with great confidence. Either pursue this idea with everything you've got, or don't pursue it at all.",
+                        "As you take charge of your health, you may feel at times that there is a bit too much to keep track of! Diet, routine, exercise, illness, sleep - and everything else that is involved with this thing called 'self-love.' This is why you have friends. Your friends can help you assess your situation and figure out the best course of action. Sometimes laughing away the tension is all you really need!",
+                        "You might have the chance to speak with new people in interesting fields, perhaps from foreign lands, Scorpio. Your conversational abilities are at an all-time high, so you'll not only enjoy talking with everyone, but they'll enjoy talking with you, too. Intriguing ideas and useful information could have your mind buzzing all night. Try to take a walk in the evening to clear your head.",
+                        "Conversation today may not be at its most witty and sparkling, but you will nevertheless make quite a lot of progress romantically. The person you have set your sights on may not be the most talkative you have met, but they do have many other qualities that you intend to take seriously. You will probably make an impression if you behave calmly and considerately.",
+                        "For every pharmaceutical treatment, there is a holistic way to take care of yourself! Pay attention to where you get your knowledge regarding wellness. Do you rely on what your parents taught you? (How is their health?) Do you believe what's written on all the packaging you buy? Do you have a friend or two who seem 'tuned in' to holistic health care practices? Open yourself to receiving knowledge from new sources and notice the healthy difference it can make in your life.",
+                        "There is so much sensitivity in you. You may feel that peace is all you need to be happy, and be heartbroken to see what is going on in the world. Try giving yourself peace as much and as often as you can: peace in the bathtub, peace at the dinner table, and peace in bed. Learn to require in your own life what you want to see in the world. Drawing that power up in yourself will give you focus and ground you. Exercise is the mainstay of this dream.",
+                        "Thanks to the day's planetary configuration, you will intuitively sense the state of world affairs. This aspect sends messages of brotherly love, and in many cases, meets with resistance. Give yourself the benefit of a healthy lifestyle during this critical time in the human story. A healthy lifestyle includes plenty of rest because an overactive mind can take you away from the basics. Rest, diet, and exercise should be your mantra during trying times.",
+                        "This is a day of fresh beginnings for you, Scorpio. Accomplishments in the past foster a new sense of self-confidence, along with optimism and enthusiasm for the future. Travel lies ahead in the distant future, and possibly advancing your education in some way. Romance also looks promising. Go for a facial or massage today, if possible, or buy some new clothes. Start the new cycle by making your appearance match what you feel inside.",
+                        "Something you might have wanted to keep between you and a few trusted friends could inadvertently be revealed, perhaps to the wrong people. Frustration and a sense of betrayal could plague you, but don't turn against those who knew. Even though this can be disconcerting, you can learn from it. Benjamin Franklin said, 'Two people can keep a secret only when one of them is dead.'",
+                        "This is a time when you're likely to feel especially idealistic and hopeful. Spiritual experiences may have you on cloud nine, Scorpio. Your intuition is also strong. You might consider taking a future trip to a distant state or foreign country, perhaps one associated with a great spiritual tradition. Wait a day or two and talk it over with friends before making any specific arrangements.",
+                        "Crazy as it seems, why not plan that trip you've been eager to go on, Scorpio? Adventure calls, and although there are a few obstacles to stop you from answering, you can’t wait to get out of your rut. There is a great big world out there, and you can’t wait to make the time to go and see some of it!",
+                        "Today you're likely to experience a powerful burst of energy that may temporarily turn you into a workaholic. Chores may have piled up around the house that desperately need to be done. You may want to go through them like wildfire. You don't have to do them all at once. Take care of the most pressing tasks and then relax. The rest can wait. Ask family members to help.",
+                        "Today you could be feeling warm and friendly toward everyone. You might be involved in virtual social events or receive invitations to future parties. You'll probably have a great time and make some new friends. Take care to take lots of vitamin C. There could be colds or other bugs flying around and you could be more susceptible to such infections at this time.",
+                        "There could be some restrictions on your emotions today, Scorpio. You'll find that a practical, grounded force is working against your intuitive understanding of whatever issue concerns you. Do your best to anchor yourself in the truth before you scatter seeds of erratic emotions all over the place. It's important for you to maintain stability at all times.",
+                        "Today, Scorpio, you might turn to practices like meditation or psychic development. Some vivid dreams over the past few days may have brought up personal issues that you need to clear up in order to progress. You may pick up on the thoughts and feelings of others more strongly than usual. If you've been thinking about learning to read tarot cards or runes, this is the day to start.",
+                        "Emotions could be intense at work today as important projects approach their deadlines, Scorpio. You may put in more time than usual. Tempers might flare and co-workers clash, so stay calm and keep going. On the positive side, the financial and recognition payoffs for whatever you accomplish today should prove well worth the effort.",
+                        "You may be feeling a bit on edge today, Scorpio. Your self-confidence is shaky and you may feel in need of new challenges. The tedious tasks you have in front of you don't inspire your imagination or creativity. Do what you can to get through this difficult day. Be extra kind to yourself by indulging in a good lunch or listening to classical music.",
+                        "There's tension in the air today, Scorpio, and you might be restless and anxious to start something. There is plenty of energy around to feed you, but the trick is to make sure that you're doing things for the right reasons. Don't do things out of guilt, fear, or regret. Keep on the best path for the best reasons for the best results.",
+                        "Scorpio, you're usually more outwardly directed, but today you might break that pattern. You could be in a contemplative mood and wondering about everything from metaphysics to philosophy to money to your future. You're basically feeling positive about life, but you might be at a crossroads now. It may take some serious thought before you decide which direction to go. Give yourself some time.",
+                        "Financial worries might come up today, Scorpio. You may check your bank balance and find that you have little money. This might come as a shock, because you thought there was plenty there. Before you panic, ask whoever's in charge at the bank to double-check the records. It's probably a computer error. It shouldn't take long to correct, and you'll be able to breathe a sigh of relief.",
+                        "There's an incredibly expansive feeling in the air that you should latch onto, Scorpio. Things are moving rapidly. You'll find long-term trends come together quite well. The thing to be aware of today is making sure you're operating based on facts you know to be true. Check your sources. Be cautious, but if you see an opportunity that looks good, run with it.",
+                        "Today's a good day to check into advancing your career or education, Scorpio. The energy favors expansion and growth. When was the last time you learned a new skill? It doesn't have to be work related, either. If arranging flowers, skydiving, or programming websites is something that appeals to you, go for it. Never stop looking for ways to expand your knowledge.",
+                        "If you've been feeling tired or sick lately, this will probably turn around for you today, Scorpio. Bouts of moodiness can be a real drain. Your emotional state has a pronounced effect on the way your body feels. Be sure to take care of your feelings as well as your body. If there are things that need to be worked out, do that now. The two really do go together.",
+                        "Working within boundaries and restrictions could get to you today, Scorpio. Yours is an independent spirit, and your best achievements are often born of doing things your own way. Like it or not, we all have to follow rules. Finish what needs to be done. Afterward, you may find more freedom to act independently without consequences. Exercise patience and diligence as needed.",
+                        "Continued success and good luck should have you feeling charged up to move ahead with plans and ideas. Your energy and enthusiasm are high, Scorpio. You're likely thinking about expanding your horizons, perhaps through travel or education. You should definitely give these serious thought. Plan carefully and take care not to move before the time is right.",
+                        "Your heart has been active, Scorpio, and you're probably feeling the need to take charge of a certain relationship. Instead of being too hasty in your pursuit of this romance, you should probably do more planning. Look at the situation from a long-term perspective and see if the partnership is heading the way you want it to, based on how things are moving now. It could be that you're jumping ahead of the game.",
+                        "Be yourself today - 100 percent you, Scorpio. The world needs more individuality. Revel in your unique qualities and be generous about sharing them with the world. Feel free to adopt a new and unconventional way of doing something - anything. Beware, however, that there may be a strong, grounding force that's trying to tie you down to tradition. Don't feel pressured to give in to the social norm.",
+                        "There's a great deal of fuel to keep your fire raging today, Scorpio. Powerful situations are apt to come your way in which you're asked to take decisive action. Don't shy away from added responsibility. Your ego is very strong, which helps you take charge of any situation. Just make sure that you don't step on anyone's toes in the process.",
+                        "There's a great deal of fuel to keep your fire raging today, Scorpio. Powerful situations are apt to come your way in which you're asked to take decisive action. Don't shy away from added responsibility. Your ego is very strong, which helps you take charge of any situation. Just make sure that you don't step on anyone's toes in the process.",
+                        "Today is your day to dream and dream big, Scorpio. Think about what it is that you want most out of life. Aim your arrow to the stars and pull back your bow as far as possible. There's no limit to how far you can go. Your only limitation is your imagination. Don't worry if your plan doesn't seem to make any rational sense. Worry more about what you want and less about how you're going to get it."]
+
+                    bot.send_message(call.message.chat.id,
+                                     f"♈️Aries:\n{str(random.choice(quotes))}.\n✅ {str(random.choice(colors))}\n✅ {str(random.choice(Object))}"
+                                     f"\n\n" + str(random.choice(advice_1)) + "\n💰: " + random.choice(
+                                         numbers) * "⭐" + f"\n❣: " + random.choice(
+                                         numbers) * "⭐" + f"\n🏢: " + random.choice(numbers) * "⭐" + f"\n💊: " + random.choice(
+                                         numbers) * "⭐")
+
+                    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                                          text=call.message.text,
+                                          reply_markup='')
+            except Exception:
+                bot.edit_message_text(call.message.chat.id, 'Это что еще за покемон?\nОшибка на сервер, сейчас кабанчики подскочат и порешают!')
+        @bot.message_handler(content_types = ['text'])
+        def main(message): #Отвечает за кнопки на клавиатуре
             print(message.from_user)
             #528178987 - Катя
             #1005179687 - Дима
@@ -552,10 +549,10 @@ while True:
 
         #except Exception:
             #bot.send_message(message.chat.id, f'Это что еще за покемон? {random.choice(smiles)}\nОшибка на сервер, сейчас кабанчики подскочат и порешают! {random.choice(smiles)}')
-    # def games(message):
-    #     bot.send_message(message.chat.id, 'Hello')
-    #     bot.register_next_step_handler(message, welcome)
+        # def games(message):
+        #     bot.send_message(message.chat.id, 'Hello')
+        #     bot.register_next_step_handler(message, welcome)
 
-    bot.polling(none_stop = True)
-  except Exception:
-    pass
+        bot.polling(none_stop = True)
+    except Exception:
+        pass
