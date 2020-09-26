@@ -11,7 +11,7 @@ while True:
         #import COVID19Py
         import pyowm
         from telebot.types import InlineKeyboardMarkup
-        from pycbrf.toolbox import ExchangeRates
+        
 
         bot: TeleBot = telebot.TeleBot(config.TOKEN2)
         owm = pyowm.OWM(config.TOKEN3, language = "ru")
