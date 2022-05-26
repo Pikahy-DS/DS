@@ -9,5 +9,5 @@ sentry-sdk==0.14.3
 
 aiohttp[speedups]==3.6.2
 uvloop==0.14.0
-ujson==1.35
+ujson==5.2.0
 aiogram==2.5.3
